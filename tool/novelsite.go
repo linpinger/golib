@@ -27,8 +27,7 @@ func GetTOCLast(html string) [][]string {
 	lastCount := 50 // 取倒数50个链接
 
 	// 链接列表 lks
-	reLink, _ := regexp.Compile("(?smi)<a[^>]*?href=[\"|']([^\"']*?)[\"|'][^>]*?>([^<]*)<")
-	lks := reLink.FindAllStringSubmatch(html, -1)
+	lks := regexp.MustCompile("(?smi)<a[^>]*?href=[\"|']([^\"']*?)[\"|'][^>]*?>([^<]*)<").FindAllStringSubmatch(html, -1)
 	if nil == lks {
 		return nil
 	}
@@ -73,8 +72,7 @@ func GetTOC(html string) [][]string {
 	var isKeyExist bool
 
 	// 链接列表 lks
-	reLink, _ := regexp.Compile("(?smi)<a[^>]*?href=[\"|']([^\"']*?)[\"|'][^>]*?>([^<]*)<")
-	lks := reLink.FindAllStringSubmatch(html, -1)
+	lks := regexp.MustCompile("(?smi)<a[^>]*?href=[\"|']([^\"']*?)[\"|'][^>]*?>([^<]*)<").FindAllStringSubmatch(html, -1)
 	if nil == lks {
 		return nil
 	}
@@ -189,25 +187,18 @@ func filterIT(links [][]string) [][]string {
 }
 
 func GetContent(html string) string {
-	reBody, _ := regexp.Compile("(?smi)<body[^>]*?>(.*)</body>")
-	bd := reBody.FindStringSubmatch(html)
+	bd := regexp.MustCompile("(?smi)<body[^>]*?>(.*)</body>").FindStringSubmatch(html)
 	if nil != bd {
 		html = bd[1]
 	}
 	// 替换无用标签，可根据需要自行添加
-	reRC, _ := regexp.Compile("(?smi)<script[^>]*?>.*?</script>")
-	html = reRC.ReplaceAllString(html, "")
-	reRS, _ := regexp.Compile("(?smi)<style[^>]*?>.*?</style>")
-	html = reRS.ReplaceAllString(html, "")
-	reRA, _ := regexp.Compile("(?smi)<a[^>]*?>")
-	html = reRA.ReplaceAllString(html, "<a>")
-	reRD, _ := regexp.Compile("(?smi)<div[^>]*?>")
-	html = reRD.ReplaceAllString(html, "<div>")
+	html = regexp.MustCompile("(?smi)<script[^>]*?>.*?</script>").ReplaceAllString(html, "")
+	html = regexp.MustCompile("(?smi)<style[^>]*?>.*?</style>").ReplaceAllString(html, "")
+	html = regexp.MustCompile("(?smi)<a[^>]*?>").ReplaceAllString(html, "<a>")
+	html = regexp.MustCompile("(?smi)<div[^>]*?>").ReplaceAllString(html, "<div>")
 	// 下面这两个是必需的
-	reRN, _ := regexp.Compile("(?smi)[\r\n]*")
-	html = reRN.ReplaceAllString(html, "")
-	reRV, _ := regexp.Compile("(?smi)</div>")
-	html = reRV.ReplaceAllString(html, "</div>\n")
+	html = regexp.MustCompile("(?smi)[\r\n]*").ReplaceAllString(html, "")
+	html = regexp.MustCompile("(?smi)</div>").ReplaceAllString(html, "</div>\n")
 
 	// 获取最长的行maxLine
 	lines := strings.Split(html, "\n")
@@ -233,14 +224,10 @@ func GetContent(html string) string {
 	html = strings.Replace(html, "<br />", "\n", -1)
 	html = strings.Replace(html, "<div>", "", -1)
 	html = strings.Replace(html, "</div>", "", -1)
-	reR1, _ := regexp.Compile("(?i)<br[ /]*>")
-	html = reR1.ReplaceAllString(html, "\n")
-	reR2, _ := regexp.Compile("(?smi)<a[^>]*?>.*?</a>")
-	html = reR2.ReplaceAllString(html, "\n")
-	reR3, _ := regexp.Compile("(?mi)<[^>]*?>") // 删除所有标签
-	html = reR3.ReplaceAllString(html, "")
-	reR4, _ := regexp.Compile("(?mi)^[ \t]*") // 删除所有标签
-	html = reR4.ReplaceAllString(html, "")
+	html = regexp.MustCompile("(?i)<br[ /]*>").ReplaceAllString(html, "\n")
+	html = regexp.MustCompile("(?smi)<a[^>]*?>.*?</a>").ReplaceAllString(html, "\n")
+	html = regexp.MustCompile("(?mi)<[^>]*?>").ReplaceAllString(html, "") // 删除所有标签
+	html = regexp.MustCompile("(?mi)^[ \t]*").ReplaceAllString(html, "") // 删除所有标签
 	strings.TrimLeft(html, "\n ")
 	html = strings.Replace(html, "\n\n", "\n", -1)
 	html = strings.Replace(html, "　　", "", -1)
@@ -253,13 +240,11 @@ func IsQidanTOCURL_Touch7_Ajax(iURL string) bool {
 }
 
 func Qidian_GetTOC_Touch7_Ajax(jsonStr string) [][]string {
-	reID, _ := regexp.Compile("(?i)\"bookId\":\"([0-9]+)\",")
-	mID := reID.FindStringSubmatch(jsonStr)
+	mID := regexp.MustCompile("(?i)\"bookId\":\"([0-9]+)\",").FindStringSubmatch(jsonStr)
 
 	// {"uuid":1,"cN":"001巴克的早餐","uT":"2019-09-06  14:05","cnt":2089,"cU":"","id":491020997,"sS":1},
 	// {"uuid":126,"cN":"第125章 死团子当活团子医","uT":"2019-10-18  12:12","cnt":3142,"cU":"","id":498495980,"sS":0},
-	reLink, _ := regexp.Compile("(?mi)\"cN\":\"([^\"]+)\".*?\"id\":([0-9]+).*?\"sS\":([01])")
-	lks := reLink.FindAllStringSubmatch(jsonStr, -1)
+	lks := regexp.MustCompile("(?mi)\"cN\":\"([^\"]+)\".*?\"id\":([0-9]+).*?\"sS\":([01])").FindAllStringSubmatch(jsonStr, -1)
 	if nil == lks {
 		return nil
 	}
@@ -285,8 +270,7 @@ func Qidian_getContentURL_Touch7_Ajax(pageID string, bookID string) string {
 }
 
 func Qidian_GetContent_Touch7_Ajax(jsonStr string) string {
-	reID, _ := regexp.Compile("(?smi)\"content\":\"([^\"]+)\",")
-	fs := reID.FindStringSubmatch(jsonStr)
+	fs := regexp.MustCompile("(?smi)\"content\":\"([^\"]+)\",").FindStringSubmatch(jsonStr)
 	if nil != fs {
 		jsonStr = fs[1]
 	}

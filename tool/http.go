@@ -131,8 +131,7 @@ func (fr *FoxRequest) SetCookie(value string) *FoxRequest {
 }
 
 func Html2UTF8(html string) string {
-	ec, _ := regexp.Compile("(?smi)<meta[^>]*charset=[\" ]*([^\" >]*)[\" ]*")
-	mc := ec.FindStringSubmatch(html)
+	mc := regexp.MustCompile("(?smi)<meta[^>]*charset=[\" ]*([^\" >]*)[\" ]*").FindStringSubmatch(html)
 	if nil != mc { // 网页中没找到charset
 		htmlEnc := strings.ToLower(string(mc[1]))
 		if "gbk" == htmlEnc || "gb2312" == htmlEnc || "gb18030" == htmlEnc {
