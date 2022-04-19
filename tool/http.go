@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -75,6 +76,8 @@ func (fhc *FoxHTTPClient) do(fr *FoxRequest) []byte {
 			bys, _ := ReadAll(response.Body)
 			return bys
 		}
+	} else {
+		io.Copy(ioutil.Discard, response.Body)
 	}
 	return nil
 }
