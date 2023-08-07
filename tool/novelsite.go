@@ -234,11 +234,34 @@ func GetContent(html string) string {
 	return html
 }
 
+func IsQidanTOCURL_Desk8(iURL string) bool {
+	return strings.Contains(iURL, "www.qidian.com/book/")
+}
+
+/*
 func IsQidanTOCURL_Touch7_Ajax(iURL string) bool {
 	// https://m.qidian.com/majax/book/category?bookId=1016319872
 	return strings.Contains(iURL, "m.qidian.com/majax/book/category")
 }
+*/
 
+func Qidian_GetTOC_Desk8(html string) [][]string {
+	lks := regexp.MustCompile("(?smi)<li [^>]+>[^<]*<a [^>]+ href=\"(//www.qidian.com/chapter/[^\"]+)\"[^>]+>([^<]+)</a>(.*?)</li>").FindAllStringSubmatch(html, -1)
+	if nil == lks {
+		return nil
+	}
+	var olks [][]string // [] ["", pageurl, pagename]
+	for _, lk := range lks {
+		if strings.Contains(lk[3], "chapter-locked") {
+			olks = append(olks, []string{"", "https:" + lk[1], "VIP: " + lk[2]})
+			break
+		} else {
+			olks = append(olks, []string{"", "https:" + lk[1], lk[2]})
+		}
+	}
+	return olks
+}
+/*
 func Qidian_GetTOC_Touch7_Ajax(jsonStr string) [][]string {
 	mID := regexp.MustCompile("(?i)\"bookId\":\"([0-9]+)\",").FindStringSubmatch(jsonStr)
 
@@ -259,7 +282,11 @@ func Qidian_GetTOC_Touch7_Ajax(jsonStr string) [][]string {
 	}
 	return olks
 }
-
+*/
+func IsQidanContentURL_Desk8(iURL string) bool {
+	return strings.Contains(iURL, "www.qidian.com/chapter/")
+}
+/*
 func IsQidanContentURL_Touch7_Ajax(iURL string) bool {
 	// https://m.qidian.com/majax/chapter/getChapterInfo?bookId=1015209014&chapterId=462636481
 	return strings.Contains(iURL, "m.qidian.com/majax/chapter/getChapterInfo")
@@ -268,7 +295,23 @@ func IsQidanContentURL_Touch7_Ajax(iURL string) bool {
 func Qidian_getContentURL_Touch7_Ajax(pageID string, bookID string) string {
 	return "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=" + bookID + "&chapterId=" + pageID
 }
-
+*/
+func Qidian_GetContent_Desk8(html string) string {
+	ctt := html
+	fs := regexp.MustCompile("(?smi)<main[^>]+>(.+?)</main>").FindStringSubmatch(html)
+	if nil != fs {
+		ctt = fs[1]
+	}
+	if strings.HasPrefix(ctt, "<p>") {
+		ctt = strings.TrimLeft(ctt, "<p>")
+	}
+	ctt = strings.Replace(ctt, "<p>", "\n", -1)
+	ctt = strings.Replace(ctt, "　　", "", -1)
+	ctt = strings.Replace(ctt, "</p>", "\n", -1)
+	ctt = strings.Replace(ctt, "\n\n", "\n", -1)
+	return ctt
+}
+/*
 func Qidian_GetContent_Touch7_Ajax(jsonStr string) string {
 	fs := regexp.MustCompile("(?smi)\"content\":\"([^\"]+)\",").FindStringSubmatch(jsonStr)
 	if nil != fs {
@@ -281,6 +324,7 @@ func Qidian_GetContent_Touch7_Ajax(jsonStr string) string {
 	jsonStr = strings.Replace(jsonStr, "<p>　　", "\n", -1)
 	return jsonStr
 }
+*/
 
 // var p = fmt.Println
 
