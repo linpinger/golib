@@ -238,6 +238,9 @@ func IsQidanTOCURL_Desk8(iURL string) bool {
 	return strings.Contains(iURL, "www.qidian.com/book/")
 }
 
+func IsQidanTOCURL_Touch8(iURL string) bool { // https://m.qidian.com/book/1038324115/catalog/
+	return strings.Contains(iURL, "m.qidian.com/book/")
+}
 /*
 func IsQidanTOCURL_Touch7_Ajax(iURL string) bool {
 	// https://m.qidian.com/majax/book/category?bookId=1016319872
@@ -261,6 +264,29 @@ func Qidian_GetTOC_Desk8(html string) [][]string {
 	}
 	return olks
 }
+
+func Qidian_GetTOC_Touch8(html string) [][]string {
+	jsonStr := regexp.MustCompile("(?smi)\"application/json\">(.+)</script>").FindStringSubmatch(html)
+	mID := regexp.MustCompile("(?i)\"bookId\":\"([0-9]+)\",").FindStringSubmatch(jsonStr[1])
+
+	// {"uuid":1,"cN":"001巴克的早餐","uT":"2019-09-06  14:05","cnt":2089,"cU":"","id":491020997,"sS":1},
+	// {"uuid":126,"cN":"第125章 死团子当活团子医","uT":"2019-10-18  12:12","cnt":3142,"cU":"","id":498495980,"sS":0},
+	lks := regexp.MustCompile("(?mi)\"cN\":\"([^\"]+)\".*?\"id\":([0-9]+).*?\"sS\":([01])").FindAllStringSubmatch(jsonStr[1], -1)
+	if nil == lks {
+		return nil
+	}
+	var olks [][]string // [] ["", pageurl, pagename]
+	for _, lk := range lks {
+		if "1" == lk[3] {
+			olks = append(olks, []string{"", Qidian_getContentURL_Touch8(lk[2], mID[1]), lk[1]})
+		} else {
+			olks = append(olks, []string{"", Qidian_getContentURL_Touch8(lk[2], mID[1]), "VIP: " + lk[1]})
+			break
+		}
+	}
+	return olks
+}
+
 /*
 func Qidian_GetTOC_Touch7_Ajax(jsonStr string) [][]string {
 	mID := regexp.MustCompile("(?i)\"bookId\":\"([0-9]+)\",").FindStringSubmatch(jsonStr)
@@ -285,6 +311,13 @@ func Qidian_GetTOC_Touch7_Ajax(jsonStr string) [][]string {
 */
 func IsQidanContentURL_Desk8(iURL string) bool {
 	return strings.Contains(iURL, "www.qidian.com/chapter/")
+}
+func IsQidanContentURL_Touch8(iURL string) bool {
+	return strings.Contains(iURL, "m.qidian.com/chapter/")
+}
+func Qidian_getContentURL_Touch8(pageID string, bookID string) string {
+//	return "https://m.qidian.com/chapter/" + bookID + "/" + pageID + "/"
+	return "/chapter/" + bookID + "/" + pageID + "/"
 }
 /*
 func IsQidanContentURL_Touch7_Ajax(iURL string) bool {
