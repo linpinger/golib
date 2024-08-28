@@ -166,6 +166,7 @@ func SimplifyDelList(inDelList string) string { // 精简为9条记录
 }
 
 // 排序用
+/*
 type SortByPageCount []Book
 
 func (cc SortByPageCount) Len() int           { return len(cc) }
@@ -174,6 +175,21 @@ func (cc SortByPageCount) Less(i, j int) bool { return len(cc[i].Chapters) > len
 
 func (shelf *Shelf) Sort() *Shelf { // 按章节数降序排
 	sort.Sort(SortByPageCount(shelf.Books)) // 排序
+	return shelf
+}
+*/
+
+func (shelf *Shelf) SortBooksAsc() *Shelf { // 按章节数升序排
+	sort.Slice(shelf.Books, func(i, j int) bool {
+		return len(shelf.Books[i].Chapters) < len(shelf.Books[j].Chapters)
+	})
+	return shelf
+}
+
+func (shelf *Shelf) SortBooksDesc() *Shelf { // 按章节数降序排
+	sort.Slice(shelf.Books, func(i, j int) bool {
+		return len(shelf.Books[i].Chapters) > len(shelf.Books[j].Chapters)
+	})
 	return shelf
 }
 
