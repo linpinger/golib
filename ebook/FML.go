@@ -165,20 +165,6 @@ func SimplifyDelList(inDelList string) string { // 精简为9条记录
 	return oStr
 }
 
-// 排序用
-/*
-type SortByPageCount []Book
-
-func (cc SortByPageCount) Len() int           { return len(cc) }
-func (cc SortByPageCount) Swap(i, j int)      { cc[i], cc[j] = cc[j], cc[i] }
-func (cc SortByPageCount) Less(i, j int) bool { return len(cc[i].Chapters) > len(cc[j].Chapters) }
-
-func (shelf *Shelf) Sort() *Shelf { // 按章节数降序排
-	sort.Sort(SortByPageCount(shelf.Books)) // 排序
-	return shelf
-}
-*/
-
 func (shelf *Shelf) SortBooksAsc() *Shelf { // 按章节数升序排
 	sort.Slice(shelf.Books, func(i, j int) bool {
 		return len(shelf.Books[i].Chapters) < len(shelf.Books[j].Chapters)
@@ -222,11 +208,36 @@ func (shelf *Shelf) GetAllBookIDX() []int { // 获取所有需更新的bookIDX
 	}
 	return idxs
 }
+
 func (shelf *Shelf) ClearBook(bookIDX int) *Shelf { // 清空某书，保存记录的内种
 	book := &shelf.Books[bookIDX]
 	newDelURL := SimplifyDelList(book.GetBookAllPageStr()) // 获取某书的所有章节列表字符串 并精简
 	book.Delurl = []byte(newDelURL)
 	book.Chapters = nil
+	return shelf
+}
+
+func (shelf *Shelf) DescDelBlankPage(bDelAll bool) *Shelf { // 倒序清空空白章节
+//	removeCount := 0
+	for bkIDX, book := range shelf.Books {
+		if ! bDelAll && string(book.Statu) == "1" { // 标记为不再更新的书
+			continue
+		}
+		pageCount := len(book.Chapters)
+		if pageCount > 0 {
+			lastIDX := pageCount - 1
+			for i := lastIDX; i >= 0; i-- {
+				if len(book.Chapters[i].Content) < 3000 { // utf-8:中文3字节
+					lastIDX = i
+//					removeCount = 1 + removeCount
+				} else {
+					break
+				}
+			}
+			shelf.Books[bkIDX].Chapters = book.Chapters[:lastIDX] // 倒序清空空白章节
+		}
+	}
+//	return removeCount
 	return shelf
 }
 
@@ -241,7 +252,7 @@ func (book *Book) GetBookAllPageStr() string { // 获取某书的所有章节列
 /*
 func main() {
 	sTime := time.Now()
-	shelf := NewShelf("T:/x/wutuxs.fml")
+	shelf := NewShelf("T:/x/xxxx.fml")
 	eTime := time.Now().Sub(sTime) // 20M: xml:625ms regexp: 3850 ms  index:78ms
 	fmt.Println("- load fml Time =", eTime.String())
 

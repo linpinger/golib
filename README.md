@@ -6,6 +6,7 @@ some tool for golang
 
 ## Log
 
+- 2024-08-30: FML.go 添加 `DescDelBlankPage` 方法: 倒序清空空白章节（貌似有bug）
 - 2024-08-28: FML.go 修改 排序 方法
 - 2023-08-07: novelsite.go 修改起点无效的旧url为新的桌面版url
 - 2022-04-19: http.go 中添加 `io.Copy(ioutil.Discard, response.Body)` 以重用连接
