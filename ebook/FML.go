@@ -183,11 +183,8 @@ type PageLoc struct {
 	BookIDX, PageIDX int
 }
 
-func (shelf *Shelf) GetAllBlankPages(onlyNew bool) []PageLoc {
-	contentSize := 3000
-	if onlyNew {
-		contentSize = 1
-	}
+func (shelf *Shelf) GetAllBlankPages(contentSize int) []PageLoc {
+//	contentSize := 3000
 	var blankPages []PageLoc
 	for bidx, book := range shelf.Books {
 		for pidx, page := range book.Chapters {
