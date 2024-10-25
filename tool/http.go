@@ -55,7 +55,7 @@ type FoxHTTPClient struct {
 }
 
 func NewFoxHTTPClient() *FoxHTTPClient {
-	return &FoxHTTPClient{httpClient: &http.Client{Timeout: 5 * time.Second}}
+	return &FoxHTTPClient{httpClient: &http.Client{Transport: &http.Transport{Proxy: http.ProxyFromEnvironment}, Timeout: 5 * time.Second}}
 }
 
 func (fhc *FoxHTTPClient) do(fr *FoxRequest) []byte {

@@ -6,6 +6,8 @@ some tool for golang
 
 ## Log
 
+- 2024-10-25: http.go 添加 环境变量代理 `Proxy: http.ProxyFromEnvironment`
+- 2022-04-19: http.go 中添加 `io.Copy(ioutil.Discard, response.Body)` 以重用连接
 - 2024-10-10: FML.go 修改 `GetAllBlankPages` 参数: bool 改为 int（空白章节最大字节）
 - 2024-08-30: FML.go 添加 `DescDelBlankPage` 方法: 倒序清空空白章节（貌似有bug）
 - 2024-08-28: FML.go 修改 排序 方法
