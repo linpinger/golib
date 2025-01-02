@@ -214,7 +214,7 @@ func (shelf *Shelf) ClearBook(bookIDX int) *Shelf { // 清空某书，保存记�
 	return shelf
 }
 
-func (shelf *Shelf) DescDelBlankPage(bDelAll bool) *Shelf { // 倒序清空空白章节
+func (shelf *Shelf) DescDelBlankPage(bDelAll bool, maxContentLen int) *Shelf { // if len(第一章) < 6000 { 全清 } else { 倒序清空 }
 //	removeCount := 0
 	for bkIDX, book := range shelf.Books {
 		if ! bDelAll && string(book.Statu) == "1" { // 标记为不再更新的书
@@ -222,16 +222,21 @@ func (shelf *Shelf) DescDelBlankPage(bDelAll bool) *Shelf { // 倒序清空空�
 		}
 		pageCount := len(book.Chapters)
 		if pageCount > 0 {
-			lastIDX := pageCount - 1
-			for i := lastIDX; i >= 0; i-- {
-				if len(book.Chapters[i].Content) < 3000 { // utf-8:中文3字节
-					lastIDX = i
-//					removeCount = 1 + removeCount
-				} else {
-					break
+			firstLen := len(book.Chapters[0].Content)
+			if firstLen < maxContentLen { // 全删
+				shelf.Books[bkIDX].Chapters = nil
+			} else { // 倒序删
+				lastIDX := pageCount - 1
+				for i := lastIDX; i >= 0; i-- {
+					if len(book.Chapters[i].Content) < maxContentLen { // utf-8:中文3字节
+						lastIDX = i
+//						removeCount = 1 + removeCount
+					} else {
+						break
+					}
 				}
+				shelf.Books[bkIDX].Chapters = book.Chapters[:lastIDX] // 倒序清空空白章节
 			}
-			shelf.Books[bkIDX].Chapters = book.Chapters[:lastIDX] // 倒序清空空白章节
 		}
 	}
 //	return removeCount

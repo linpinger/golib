@@ -6,6 +6,7 @@ some tool for golang
 
 ## Log
 
+- 2025-01-02: FML.go 修改 `DescDelBlankPage` 方法: if 第一章字节数 小于 6000  全清 else 倒序清空
 - 2024-10-25: http.go 添加 环境变量代理 `Proxy: http.ProxyFromEnvironment`
 - 2022-04-19: http.go 中添加 `io.Copy(ioutil.Discard, response.Body)` 以重用连接
 - 2024-10-10: FML.go 修改 `GetAllBlankPages` 参数: bool 改为 int（空白章节最大字节）
