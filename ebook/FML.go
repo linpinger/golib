@@ -232,6 +232,7 @@ func (shelf *Shelf) DescDelBlankPage(bDelAll bool, maxContentLen int) *Shelf { /
 						lastIDX = i
 //						removeCount = 1 + removeCount
 					} else {
+						lastIDX = 1 + i
 						break
 					}
 				}
