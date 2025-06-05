@@ -6,6 +6,7 @@ some tool for golang
 
 ## Log
 
+- 2025-06-05: http.go 中添加 `NewFoxRequestPOST` 以使用POST方法
 - 2025-01-03: FML.go 修复 `DescDelBlankPage` 一直以来的一个bug，会删除最后正常的一章
 - 2025-01-02: FML.go 修改 `DescDelBlankPage` 方法: if 第一章字节数 小于 6000  全清 else 倒序清空
 - 2024-10-25: http.go 添加 环境变量代理 `Proxy: http.ProxyFromEnvironment`

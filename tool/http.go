@@ -116,6 +116,12 @@ func NewFoxRequest(url string) *FoxRequest {
 	return fr.SetDefaultHead()
 }
 
+func NewFoxRequestPOST(url string, postBody io.Reader) *FoxRequest {
+	req, _ := http.NewRequest("POST", url, postBody)
+	fr := &FoxRequest{req: req}
+	return fr.SetDefaultHead()
+}
+
 func (fr *FoxRequest) SetDefaultHead() *FoxRequest {
 	fr.SetUA("Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)")
 	// fr.SetHead("Accept-Encoding", "gzip, deflate")
