@@ -196,6 +196,17 @@ func (shelf *Shelf) GetAllBlankPages(contentSize int) []PageLoc {
 	return blankPages
 }
 
+func (shelf *Shelf) GetBookBlankPages(bookIDX int, contentSize int) []PageLoc {
+	var blankPages []PageLoc
+	book := shelf.Books[bookIDX]
+	for pidx, page := range book.Chapters {
+		if len(page.Content) < contentSize {
+			blankPages = append(blankPages, PageLoc{bookIDX, pidx})
+		}
+	}
+	return blankPages
+}
+
 func (shelf *Shelf) GetAllBookIDX() []int { // 获取所有需更新的bookIDX
 	var idxs []int
 	for i, bk := range shelf.Books {
